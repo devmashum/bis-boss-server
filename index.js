@@ -30,8 +30,8 @@ async function run() {
 
         const menuCollection = client.db("bistroDb").collection("menu");
         const reviewsCollection = client.db("bistroDb").collection("reviews");
-
         const cartsCollection = client.db("bistroDb").collection("carts");
+        const usersCollection = client.db("bistroDb").collection("users");
 
         app.post('/carts', async (req, res) => {
             const cartItem = req.body;
@@ -42,6 +42,34 @@ async function run() {
             const email = req.query.email;
             const query = { email: email }
             const result = await cartsCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        // show the user in users data
+        app.get('/users', async (req, res) => {
+            const result = await usersCollection.find().toArray();
+            res.send(result);
+        })
+
+        // delete user from dashboard as an admin
+
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(query);
+            res.send(result)
+        })
+        // post the user 
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            // insert email if user doesn't exists
+            // you can do thin many ways (1. email unique, 2. upsert, 3. simple checking)
+            const query = { email: user.email }
+            const existingUser = await usersCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: 'user already exist', insertedId: null })
+            }
+            const result = await usersCollection.insertOne(user);
             res.send(result);
         })
 
