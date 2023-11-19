@@ -104,7 +104,7 @@ async function run() {
         })
 
         //  add an admin 
-        app.patch('/users/admin/:id', async (req, res) => {
+        app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
             const updatedDoc = {
@@ -132,7 +132,7 @@ async function run() {
         })
 
         // Delete from the card
-        app.delete('/carts/:id', async (req, res) => {
+        app.delete('/carts/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await cartsCollection.deleteOne(query);
