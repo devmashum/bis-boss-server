@@ -144,6 +144,12 @@ async function run() {
             const result = await menuCollection.find().toArray();
             res.send(result);
         })
+        // Post data to menu from the add item form
+        app.post('/menu', async (req, res) => {
+            const item = req.body;
+            const result = await menuCollection.insertOne(item);
+            res.send(result)
+        })
 
         app.get('/reviews', async (req, res) => {
             const result = await reviewsCollection.find().toArray();
