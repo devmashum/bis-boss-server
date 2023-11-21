@@ -132,7 +132,7 @@ async function run() {
         })
 
         // Delete from the card
-        app.delete('/carts/:id', verifyToken, verifyAdmin, async (req, res) => {
+        app.delete('/carts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await cartsCollection.deleteOne(query);
@@ -145,10 +145,17 @@ async function run() {
             res.send(result);
         })
         // Post data to menu from the add item form
-        app.post('/menu', async (req, res) => {
+        app.post('/menu', verifyAdmin, verifyToken, async (req, res) => {
             const item = req.body;
             const result = await menuCollection.insertOne(item);
             res.send(result)
+        })
+        // delete from manage  all items section
+        app.delete('/menu/:id', verifyToken, verifyAdmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await menuCollection.deleteOne(query);
+            res.send(result);
         })
 
         app.get('/reviews', async (req, res) => {
